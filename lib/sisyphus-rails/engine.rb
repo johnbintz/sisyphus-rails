@@ -25,6 +25,8 @@ module Sisyphus
         Sisyphus.config["INCLUDE_MODELS"] = ENV["INCLUDE_MODELS"].split(',') if ENV.include?("INCLUDE_MODELS")
 
       end
+
+      app.config.assets.precompile << 'ckeditor/plugins/onchange/plugin.js'
     end
 
   end
