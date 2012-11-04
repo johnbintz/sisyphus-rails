@@ -193,6 +193,23 @@
                 self.bindSaveDataOnChange( field, prefix );
               }
             } );
+
+            if ( typeof window.CKEDITOR !== 'undefined' ) {
+              CKEDITOR.on( 'instanceReady', function(ev) {
+                if ( $.inArray( ev.editor.element.$, fieldsToProtect ) ) {
+                  ev.editor.on( 'change', function(eev) {
+                    eev.editor.updateElement();
+                    var element = eev.editor.element.$;
+
+                    if ( typeof element.oninput === 'undefined' ) {
+                      element.onpropertychange();
+                    } else {
+                      element.oninput();
+                    }
+                  } );
+                }
+              } );
+            }
           } );
         },
 
@@ -205,6 +222,7 @@
          */
         saveAllData: function() {
           var self = this;
+
           self.targets.each( function() {
             var targetFormId = $( this ).attr( "id" );
             var fieldsToProtect = $( this ).find( ":input" ).not( ":submit" ).not( ":reset" ).not( ":button" ).not( ":file" );
@@ -318,6 +336,7 @@
          */
         bindSaveDataImmediately: function( field, prefix ) {
           var self = this;
+
           if ( typeof $.browser.msie === 'undefined' ) {
             field.get(0).oninput = function() {
               self.saveToBrowserStorage( prefix, field.val() );
