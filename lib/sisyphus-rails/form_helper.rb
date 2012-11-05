@@ -28,6 +28,27 @@ module ActionView
       end
 
       alias_method_chain :form_for, :sisyphus
+
+      def sisyphus_status
+        buf = ActiveSupport::SafeBuffer.new
+
+        buf.safe_concat <<-JS
+          <div class="sisyphus_status" style="display:none">#{t('sisyphus.autosaved_content')}</div>
+          <script type="text/javascript">
+            (function() {
+              var original = $.sisyphus().options.onRestore;
+
+              $.sisyphus().options.onRestore = function() {
+                original();
+
+                $('.sisyphus_status').show();
+              };
+            })(this);
+          </script>
+        JS
+
+        buf
+      end
     end
   end
 end
